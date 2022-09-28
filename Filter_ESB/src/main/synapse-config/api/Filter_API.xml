@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/num" name="Filter_API" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="POST">
+        <inSequence>
+            <propertyGroup>
+                <property expression="json-eval($.num1)" name="num1" scope="default" type="INTEGER"/>
+                <property expression="json-eval($.num2)" name="num2" scope="default" type="INTEGER"/>
+            </propertyGroup>
+            <log description="view number" level="custom">
+                <property expression="get-property('num1')" name="num1"/>
+                <property expression="get-property('num2')" name="num2"/>
+            </log>
+            <filter regex="true" source="get-property('num1') > get-property('num2')">
+                <then>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message":"Num1 is greatest number "
+							}
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('num1')"/>
+                        </args>
+                    </payloadFactory>
+                </then>
+                <else>
+                    <payloadFactory media-type="json">
+                        <format>
+							{&#xd;
+							"Message": "Num2 is greatest number"
+							}
+						</format>
+                        <args>
+                            <arg evaluator="xml" expression="get-property('num2')"/>
+                        </args>
+                    </payloadFactory>
+                </else>
+            </filter>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
